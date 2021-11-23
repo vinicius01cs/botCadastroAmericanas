@@ -1,3 +1,4 @@
+from random import randint
 from selenium import webdriver
 import time
 
@@ -10,7 +11,8 @@ class americanas_bot:
         self.end_email= ""
         options = webdriver.ChromeOptions()
         options.add_argument('lang=pt-BR')
-        self.driver = webdriver.Chrome(executable_path=r'./chromedriver.exe')
+        #self.driver = webdriver.Chrome(executable_path=r'./chromedriver.exe')
+        self.driver = webdriver.Firefox(executable_path=r'./geckodriver.exe')
 
     def web_scraping(self):
         self.driver.get('https://www.4devs.com.br/gerador_de_pessoas')
@@ -24,34 +26,43 @@ class americanas_bot:
         self.end_email = self.driver.find_element_by_xpath('//*[@id="email"]').text
         self.telefone = self.driver.find_element_by_xpath('//*[@id="celular"]').text
         print(self.nome, self.cod_cpf, self.nascimento, self.end_email, self.telefone)
+        self.tratar_email(self.end_email)
+
+    def tratar_email(self, end_email):
+        email = end_email
+        numero = randint(1,1000)
+        indice_dominio = email.find('@')
+        domino_email = "@outlook.com"
+        email_base = email[:indice_dominio]
+        email_base = email_base[0:7] + str(numero)
+        email_final = str(email_base) + domino_email
+        self.end_email = email_final
 
     def cadastrar_americanas(self):
-        #<svg viewBox="0 0 20 20" class="sc-hjGYWY lmIfJs"><circle cx="10" cy="10" r="9" class="sc-fIoroj YbkeR"></circle><path d="M10,7 C8.34314575,7 7,8.34314575 7,10 C7,11.6568542 8.34314575,13 10,13 C11.6568542,13 13,11.6568542 13,10 C13,8.34314575 11.6568542,7 10,7 Z" class="sc-gUQueJ eMhYQW inner"></path><path d="M10,1 L10,1 L10,1 C14.9705627,1 19,5.02943725 19,10 L19,10 L19,10 C19,14.9705627 14.9705627,19 10,19 L10,19 L10,19 C5.02943725,19 1,14.9705627 1,10 L1,10 L1,10 C1,5.02943725 5.02943725,1 10,1 L10,1 Z" class="sc-fXeWgy cJudXV outer"></path></svg>
-        #<input data-cy="formField__name" type="text" required="" name="name" placeholder="" class="inputcomponent__InputFieldInput-x88sc3-3 hzTWms" value="">
-        self.driver.get('https://cliente.americanas.com.br/minha-conta/cadastro?next=https%3A%2F%2Fwww.americanas.com.br%2F')
-        campo_nome = self.driver.find_element_by_xpath("//*[@id='input-border']/input")
+        self.driver.get('https://cliente.americanas.com.br/simple-login/cadastro/pf?next=https%3A%2F%2Fwww.americanas.com.br%2Fhotsite%2Fapp%3Faf_adset%3D1869%26shortlink%3Dae2bc25a%26pid%3Dlasa_downloads_loja%26c%3DLASA%2520-%2520Downloads%2520por%2520Loja%26is_retargeting%3Dtrue')
+        campo_nome = self.driver.find_element_by_xpath('//*[@id="input-border"]/input')
         campo_nome.click()
         campo_nome.send_keys(self.nome)
-        time.sleep(1)
+        time.sleep(10)
         campo_sexo = self.driver.find_element_by_xpath("//*[@id='root']/div/div[2]/form/div[2]/div[2]/label[3]")
         campo_sexo.click()
-        time.sleep(1)
+        time.sleep(10)
         campo_data = self.driver.find_element_by_name('birthDate')
         campo_data.click()
-        campo_data.send_keys(self.nascimento)
-        time.sleep(1)
+        #campo_data.send_keys(self.nascimento)
+        time.sleep(10)
         campo_cpf = self.driver.find_element_by_name('cpf')
         campo_cpf.click()
         campo_cpf.send_keys(self.cod_cpf)
-        time.sleep(1)
+        time.sleep(10)
         campo_telefone = self.driver.find_element_by_name('phone')
         campo_telefone.click()
         campo_telefone.send_keys(self.telefone)
-        time.sleep(1)
+        time.sleep(10)
         campo_email = self.driver.find_element_by_name('email')
         campo_email.click()
         campo_email.send_keys(self.end_email)
-        time.sleep(1)
+        time.sleep(10)
         campo_senha = self.driver.find_element_by_name('password')
         campo_senha.click()
         campo_senha.send_keys("741963Wesley!")
